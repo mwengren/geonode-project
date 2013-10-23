@@ -210,6 +210,7 @@ INSTALLED_APPS = (
     'geonode.proxy',
     'geonode.security',
     'geonode.search',
+    'geonode.social',
     'geonode.catalogue',
     'geonode.documents',
 )
@@ -355,9 +356,9 @@ AGON_RATINGS_CATEGORY_CHOICES = {
 
 # Activity Stream
 ACTSTREAM_SETTINGS = {
-    'MODELS': ('auth.user', 'layers.layer', 'maps.map'),
+    'MODELS': ('auth.user', 'layers.layer', 'maps.map', 'dialogos.comment'),
     'FETCH_RELATIONS': True,
-    'USE_PREFETCH': True,
+    'USE_PREFETCH': False,
     'USE_JSONFIELD': True,
     'GFK_FETCH_DEPTH': 1,
 }
@@ -408,25 +409,30 @@ OGC_SERVER = {
     'default' : {
         'BACKEND' : 'geonode.geoserver',
         'LOCATION' : 'http://localhost:8080/geoserver/',
+        # PUBLIC_LOCATION needs to be kept like this because in dev mode
+        # the proxy won't work and the integration tests will fail
+        # the entire block has to be overridden in the local_settings
+        'PUBLIC_LOCATION' : 'http://localhost:8080/geoserver/',
         'USER' : 'admin',
         'PASSWORD' : 'geoserver',
-        'OPTIONS' : {
-            'MAPFISH_PRINT_ENABLED' : True,
-            'PRINTNG_ENABLED' : True,
-            'GEONODE_SECURITY_ENABLED' : True,
-            'GEOGIT_ENABLED' : False,
-            'WMST_ENABLED' : False,
-            # Set to name of database in DATABASES dictionary to enable
-            'DATASTORE': '', #'datastore',
-        }
+        'MAPFISH_PRINT_ENABLED' : True,
+        'PRINTNG_ENABLED' : True,
+        'GEONODE_SECURITY_ENABLED' : True,
+        'GEOGIT_ENABLED' : False,
+        'WMST_ENABLED' : False,
+        'BACKEND_WRITE_ENABLED': True,
+        'WPS_ENABLED' : True,
+        # Set to name of database in DATABASES dictionary to enable
+        'DATASTORE': '', #'datastore',
     }
 }
 
 # Uploader Settings
 UPLOADER = {
+    'BACKEND' : 'geonode.rest',
     'OPTIONS' : {
-        'TIME_ENABLED' : False,
-        'GEOGIT_ENABLED' : False,
+        'TIME_ENABLED': False,
+        'GEOGIT_ENABLED': False,
     }
 }
 
